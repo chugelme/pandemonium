@@ -16,6 +16,7 @@ using namespace std;
 class Monster1{
 public:
     bool alive;
+    bool agro;
     float x;
     float y;
     float ang;
@@ -49,6 +50,7 @@ void Monster1::increment(float bodx, float body, float vx, float vy, float dt){
             svel = 1;
         }
     }else{
+        agro = true;
         if((bodx - centerx)*(bodx - centerx) + (body - centery)*(body - centery) < territoryRad*territoryRad*0.1
            && (x - centerx)*(x - centerx) + (y - centery)*(y - centery) < territoryRad*territoryRad*0.5){
             ang = atan2(centery- (centery - body) - y, centerx- (centerx - bodx) - x) + 3.1415926;
@@ -77,7 +79,9 @@ void Monster1::increment(float bodx, float body, float vx, float vy, float dt){
         }
         float dist = sqrt((body-y)*(body-y) + (bodx-x)*(bodx-x));
         if(abs( sin( (sang + (2* 3.1415926* ((float)i) )/5 - atan2(body + vy*dist/2 - y,bodx + vx*dist/2 - x) )/2 ) )< 0.03  && recharge[i] == 1){
-            recharge[i] = 0;
+            if(agro){
+                recharge[i] = 0;
+            }
         }
     }
         if(HP <= 0 && minorHP <=0){
@@ -111,6 +115,7 @@ void Monster1::respawn(){
     svel = 0;
     spe = 0;
     sdir = 1;
+    agro = false;
 }
 
 void IncrementParticles(float particles[], float parvel[], int N, float increment,
@@ -1191,17 +1196,17 @@ int main(void)
         
         regen = 0;
         while(time - regentime > 0.1){
-            if(minorHP >= 0.002){
-                HP+= 0.002;
-                minorHP-= 0.002;
+            if(minorHP >= 0.005){
+                HP+= 0.005;
+                minorHP-= 0.005;
             }else if(minorHP>0){
                 HP += minorHP;
                 minorHP = 0;
             }
             for(int mn = 0; mn < m1num; mn++){
-                if(m1[mn].minorHP >= 0.002){
-                    m1[mn].HP+= 0.002;
-                    m1[mn].minorHP-= 0.002;
+                if(m1[mn].minorHP >= 0.005){
+                    m1[mn].HP+= 0.005;
+                    m1[mn].minorHP-= 0.005;
                 }else if(m1[mn].minorHP>0){
                     m1[mn].HP += m1[mn].minorHP;
                     m1[mn].minorHP = 0;
@@ -1324,6 +1329,7 @@ int main(void)
                 for(int j = 0; j < numexp; j++){
                     if((explosions[3*j]-m1[i].x)*(explosions[3*j]-m1[i].x) + (explosions[3*j+1]-m1[i].y)*(explosions[3*j+1]-m1[i].y)
                        < (explosions[3*j+2]+0.07)*(explosions[3*j+2]+0.07)){
+                        m1[i].agro = true;
                         if(explosiondata[j]==0){
                             InflictMajor(&m1[i].HP, &m1[i].minorHP, (time - prevtime));
                             InflictMinor(&m1[i].HP, &m1[i].minorHP, (time - prevtime)*2);
@@ -1352,8 +1358,8 @@ int main(void)
             if((body[0]-bullets[3*j])*(body[0]-bullets[3*j]) + (body[1]-bullets[3*j+1])*(body[1]-bullets[3*j+1])
                < (bodyrad + 0.01)*(bodyrad + 0.01)){
                 RemoveBullet(bullets, bulletvel, &bulletnum, 100, j);
-                InflictMajor(&HP, &minorHP, 0.05);
-                InflictMinor(&HP, &minorHP, 0.05);
+                InflictMajor(&HP, &minorHP, 0.03);
+                InflictMinor(&HP, &minorHP, 0.15);
                 
             }
         }
