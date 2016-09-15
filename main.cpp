@@ -1,10 +1,3 @@
-//
-//  main.cpp
-//  Pandemonium
-//
-//  Created by Cole Hugelmeyer on 9/8/16.
-//  Copyright © 2016 DeadFish. All rights reserved.
-//
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <OpenGL/gl3.h>
