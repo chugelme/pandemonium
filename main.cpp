@@ -1121,21 +1121,33 @@ int main(void)
     
     // LEVEL DATA:
     
-    float Walls[] = {-1,0,-1,-1,0,-1, 0,-1,1,-1,1,0, 0,1,-1,1,-1,0, 1,0,2,0,2,1, 2,1,2,2,1,2, 1,2,0,2,0,1,
+    
+    float Walls[] = {2,-1,1,-1,1,0, 1,0,1,-1,0,-1, 0,-1,-1,-1,-1,0, -1,0,-1,1,0,1, 0,1,0,2,1,2, 1,2,2,2,2,1, 2,1,2,2,3,2,
+        3,2,4,2,4,1, 4,1,6,1,6,-1, 6,-1,6,-3,4,-3, 4,-3,2,-3,2,-1,
+        -1,-1,2,-1,2,-3, 2,-3,-1,-1,-1,-3, -1,1,0,1,0,2, -1,1,0,2,-1,2, 4,2,4,1,6,1, 4,2,6,1,6,2,
+        -20,2,-1,2,-1,-20, -1,-20,-1,-3,20,-3, 20,-3,6,-3,6,20, 6,20,6,2,-20,2};
+    float WallsCopy[] = {2,-1,1,-1,1,0, 1,0,1,-1,0,-1, 0,-1,-1,-1,-1,0, -1,0,-1,1,0,1, 0,1,0,2,1,2, 1,2,2,2,2,1, 2,1,2,2,3,2,
+        3,2,4,2,4,1, 4,1,6,1,6,-1, 6,-1,6,-3,4,-3, 4,-3,2,-3,2,-1,
+        -1,-1,2,-1,2,-3, 2,-3,-1,-1,-1,-3, -1,1,0,1,0,2, -1,1,0,2,-1,2, 4,2,4,1,6,1, 4,2,6,1,6,2,
+        -20,2,-1,2,-1,-20, -1,-20,-1,-3,20,-3, 20,-3,6,-3,6,20, 6,20,6,2,-20,2};
+    float Centers[] = {0,0,1,1,1,1,2,0,1,3,1,1,4,-1,2};
+    float CentersCopy[] = {0,0,1,1,1,1,2,0,1,3,1,1,4,-1,2};
+    
+    /*float Walls[] = {-1,0,-1,-1,0,-1, 0,-1,1,-1,1,0, 0,1,-1,1,-1,0, 1,0,2,0,2,1, 2,1,2,2,1,2, 1,2,0,2,0,1,
         -1,1,0,1,0,2, 1,-1,1,0,2,0, -1,1,0,2,-1,2, 1,-1,2,0,2,-1,
         -1,-1,-8,-1,-1,6, 2,-1,2,-8,-5,-1, 2,2,9,2,2,-5, -1,2,-1,9,6,2};
     float Centers[] = {0,0,1,1,1,1};
     float WallsCopy[] = {-1,0,-1,-1,0,-1, 0,-1,1,-1,1,0, 0,1,-1,1,-1,0, 1,0,2,0,2,1, 2,1,2,2,1,2, 1,2,0,2,0,1,
         -1,1,0,1,0,2, 1,-1,1,0,2,0, -1,1,0,2,-1,2, 1,-1,2,0,2,-1,
         -1,-1,-8,-1,-1,6, 2,-1,2,-8,-5,-1, 2,2,9,2,2,-5, -1,2,-1,9,6,2};
-    float CentersCopy[] = {0,0,1,1,1,1};
-    int wallnum = 14;
-    int centnum = 2;
-    int CurveStraightPartition = 6;
+    float CentersCopy[] = {0,0,1,1,1,1};*/
+    int wallnum = 21;
+    int centnum = 5;
+    int CurveStraightPartition = 11;
     
     float Fade = 0;
     
-    Monster1 m1[2];
+    Monster1 m1[3];
     float bullets[300];
     float bulletvel[200];
     for(int i = 0; i < 100; i++){
@@ -1146,15 +1158,19 @@ int main(void)
         bulletvel[2*i+1] = 0;
     }
     int bulletnum=0;
-    int m1num =  2;
-    m1[0].centerx0 = 1-0.2;
+    int m1num =  3;
+    m1[0].centerx0 = 1;
     m1[0].centery0 = 1;
-    m1[0].territoryRad = 1-0.2;
-    m1[1].centerx0 = 1+0.2;
-    m1[1].centery0 = 1;
-    m1[1].territoryRad = 1-0.2;
+    m1[0].territoryRad = 1;
+    m1[1].centerx0 = 3.5;
+    m1[1].centery0 = -1;
+    m1[1].territoryRad = 1.5;
+    m1[2].centerx0 = 4.5;
+    m1[2].centery0 = -1;
+    m1[2].territoryRad = 1.5;
     m1[0].respawn();
     m1[1].respawn();
+    m1[2].respawn();
     
     
     // MAIN LOOP ___________________
@@ -1274,7 +1290,7 @@ int main(void)
             InflictMinor(&HP, &minorHP, 0.03);
             bodang = 2*atan2(-(Centers[3*NN]-body[0]),(Centers[3*NN+1]-body[1])) - bodang;
             MoveRelative(particles, bodyparticles,
-                         -(Centers[3*NN]-body[0])*0.01, -(Centers[3*NN+1]-body[1])*0.01,
+                         -(Centers[3*NN]-body[0])*0.005, -(Centers[3*NN+1]-body[1])*0.005,
                          background, density, AspectRatio, auradata, aura, Walls, Centers,
                          wallnum, centnum, m1, m1num, bullets, bulletnum);
         }
