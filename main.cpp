@@ -1277,9 +1277,9 @@ int main(void)
         for(int i = 0; i < centnum; i++){
             if((Centers[3*i]-body[0])*(Centers[3*i]-body[0]) + (Centers[3*i+1]-body[1])*(Centers[3*i+1]-body[1])
                > Centers[3*i+2]*Centers[3*i+2]){
-                if(((Centers[3*i]-body[0])*(Centers[3*i]-body[0]) + (Centers[3*i+1]-body[1])*(Centers[3*i+1]-body[1]) < min || first)
+                if((((Centers[3*i]-body[0])*(Centers[3*i]-body[0]) + (Centers[3*i+1]-body[1])*(Centers[3*i+1]-body[1]))/(Centers[3*i+2]*Centers[3*i+2]) < min || first)
                    && sin(bodang)*(Centers[3*i+1]-body[1]) + cos(bodang)*(Centers[3*i]-body[0]) < 0){
-                    min = (Centers[3*i]-body[0])*(Centers[3*i]-body[0]) + (Centers[3*i+1]-body[1])*(Centers[3*i+1]-body[1]);
+                    min = ((Centers[3*i]-body[0])*(Centers[3*i]-body[0]) + (Centers[3*i+1]-body[1])*(Centers[3*i+1]-body[1]))/(Centers[3*i+2]*Centers[3*i+2]);
                     NN = i;
                     first = false;
                 }
