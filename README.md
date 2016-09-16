@@ -2,7 +2,6 @@ TO DO:
 
 - [ ]  Make checkpoints.
 - [ ]  Add text rendering functionality. (Maybe with FreeType?) 
-- [ ]  Name the monsters. I am thinking "Fungal Mote" for this first type of monster.
 - [ ]  Add a pause menu. 
 - [ ]  Tune enemies a bit more.
 - [ ]  Improve the collision detection algorithms so that we don't wind up with S class lag later on.
