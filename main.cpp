@@ -534,7 +534,6 @@ int main(void)
     
     float bodyrad = 0.02;
     
-    // don't mess with the following -------------------------
     GLFWwindow* window;
     
     if (!glfwInit())
@@ -551,7 +550,7 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     
      
-    window = glfwCreateWindow(W, H, "Hello World", glfwGetPrimaryMonitor(), NULL);
+    window = glfwCreateWindow(W, H, "Pandemonium", glfwGetPrimaryMonitor(), NULL);
     if (!window)
     {
         glfwTerminate();
