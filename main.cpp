@@ -383,6 +383,7 @@ void MoveEverything(float particles[], float body[], int NP, int NB, float dx, f
     MoveBody(body, NB, dx, dy);
     MoveBackground(background, dx, dy, density, AspectRatio);
     MoveAura(aura, dx, dy, auradata);
+    MoveUnbound(aura, dx, dy, auradata);
     MoveWalls(Walls, dx, dy, Centers, NW, NC);
     MoveBullets(bullets, bulletnum, dx,dy);
     for(int i = 0; i < m1num; i++){
@@ -409,6 +410,32 @@ int CollisionDetector(float aura[], float auravel[], int auradata[],
     
     // might make a faster algorithm if lag becomes a problem
     
+    
+    
+    int index = 0;
+    
+    for(int i = 0; i < unb; i++){
+        
+        colnums[4* index] = aura[3*UnboundIndex[i]];
+        colnums[4* index + 1] = aura[3*UnboundIndex[i] + 1];
+                    
+        colnums[4* index + 2] = 10;
+        
+        
+        float dot =auravel[2*UnboundIndex[i]]*auravel[2*UnboundIndex[i]]
+        +auravel[2*UnboundIndex[i]+1]*auravel[2*UnboundIndex[i]+1];
+        
+        colnums[4* index + 3] = (int) dot;
+        
+                    
+        auradata[UnboundIndex[i]] = DEAD;
+        index++;
+        
+        }
+    
+    return index;
+    
+    /*
     int index = 0;
     
     bool UnDetected[auranum];
@@ -458,7 +485,7 @@ int CollisionDetector(float aura[], float auravel[], int auradata[],
         }
     }
     
-    return index;
+    return index;*/
 }
 
 void AddBullet(float bullets[],float bulletvel[], int* bulletnum, int bulletmax, float x, float y, float vx, float vy){
@@ -1040,9 +1067,12 @@ int main(void)
     GLuint UnboundIndex[auranum];
     GLuint BoundIndex[auranum];
     
+    float worldspeed = 1;
+    
     float regentime = 0;
     float prevtime20 = 0;
     float prevtime = 0;
+    float prevspace = 0;
     
     float body[60];
     for(int i = 0; i < 20; i++){
@@ -1123,8 +1153,30 @@ int main(void)
     
     int regen = 0;
     
-    // LEVEL DATA:
+    float bullets[300];
+    float bulletvel[200];
+    for(int i = 0; i < 100; i++){
+        bullets[3*i] = 0;
+        bullets[3*i+1] = 0;
+        bullets[3*i+2] = 0;
+        bulletvel[2*i] = 0;
+        bulletvel[2*i+1] = 0;
+    }
+    int bulletnum=0;
     
+    /*float Walls[] = {-1,0,-1,-1,0,-1, 0,-1,1,-1,1,0, 0,1,-1,1,-1,0, 1,0,2,0,2,1, 2,1,2,2,1,2, 1,2,0,2,0,1,
+     -1,1,0,1,0,2, 1,-1,1,0,2,0, -1,1,0,2,-1,2, 1,-1,2,0,2,-1,
+     -1,-1,-8,-1,-1,6, 2,-1,2,-8,-5,-1, 2,2,9,2,2,-5, -1,2,-1,9,6,2};
+     float Centers[] = {0,0,1,1,1,1};
+     float WallsCopy[] = {-1,0,-1,-1,0,-1, 0,-1,1,-1,1,0, 0,1,-1,1,-1,0, 1,0,2,0,2,1, 2,1,2,2,1,2, 1,2,0,2,0,1,
+     -1,1,0,1,0,2, 1,-1,1,0,2,0, -1,1,0,2,-1,2, 1,-1,2,0,2,-1,
+     -1,-1,-8,-1,-1,6, 2,-1,2,-8,-5,-1, 2,2,9,2,2,-5, -1,2,-1,9,6,2};
+     float CentersCopy[] = {0,0,1,1,1,1};*/
+    
+    
+    
+    
+    // LEVEL DATA: RPLACE THE FOLLOWING SECTION OF CODE TO MAKE A NEW LEVEL.
     
     float Walls[] = {2,-1,1,-1,1,0, 1,0,1,-1,0,-1, 0,-1,-1,-1,-1,0, -1,0,-1,1,0,1, 0,1,0,2,1,2, 1,2,2,2,2,1, 2,1,2,2,3,2,
         3,2,4,2,4,1, 4,1,6,1,6,-1, 6,-1,6,-3,4,-3, 4,-3,2,-3,2,-1,
@@ -1137,14 +1189,6 @@ int main(void)
     float Centers[] = {0,0,1,1,1,1,2,0,1,3,1,1,4,-1,2};
     float CentersCopy[] = {0,0,1,1,1,1,2,0,1,3,1,1,4,-1,2};
     
-    /*float Walls[] = {-1,0,-1,-1,0,-1, 0,-1,1,-1,1,0, 0,1,-1,1,-1,0, 1,0,2,0,2,1, 2,1,2,2,1,2, 1,2,0,2,0,1,
-        -1,1,0,1,0,2, 1,-1,1,0,2,0, -1,1,0,2,-1,2, 1,-1,2,0,2,-1,
-        -1,-1,-8,-1,-1,6, 2,-1,2,-8,-5,-1, 2,2,9,2,2,-5, -1,2,-1,9,6,2};
-    float Centers[] = {0,0,1,1,1,1};
-    float WallsCopy[] = {-1,0,-1,-1,0,-1, 0,-1,1,-1,1,0, 0,1,-1,1,-1,0, 1,0,2,0,2,1, 2,1,2,2,1,2, 1,2,0,2,0,1,
-        -1,1,0,1,0,2, 1,-1,1,0,2,0, -1,1,0,2,-1,2, 1,-1,2,0,2,-1,
-        -1,-1,-8,-1,-1,6, 2,-1,2,-8,-5,-1, 2,2,9,2,2,-5, -1,2,-1,9,6,2};
-    float CentersCopy[] = {0,0,1,1,1,1};*/
     int wallnum = 21;
     int centnum = 5;
     int CurveStraightPartition = 11;
@@ -1152,16 +1196,6 @@ int main(void)
     float Fade = 0;
     
     Monster1 m1[3];
-    float bullets[300];
-    float bulletvel[200];
-    for(int i = 0; i < 100; i++){
-        bullets[3*i] = 0;
-        bullets[3*i+1] = 0;
-        bullets[3*i+2] = 0;
-        bulletvel[2*i] = 0;
-        bulletvel[2*i+1] = 0;
-    }
-    int bulletnum=0;
     int m1num =  3;
     m1[0].centerx0 = 1;
     m1[0].centery0 = 1;
@@ -1176,9 +1210,10 @@ int main(void)
     m1[1].respawn();
     m1[2].respawn();
     
+    // ____________________________________________________________________________________________________________________
+    
     
     // MAIN LOOP ___________________
-    
     
     while (!glfwWindowShouldClose(window))
     {
@@ -1189,7 +1224,7 @@ int main(void)
         // --------- drawing and incrementation goes here --------
         
         
-        float time = (float) glfwGetTime();
+        float time = ((float) glfwGetTime())*worldspeed;
         
         // regen loop
         
@@ -1329,6 +1364,8 @@ int main(void)
                     if((explosions[3*j]-m1[i].x)*(explosions[3*j]-m1[i].x) + (explosions[3*j+1]-m1[i].y)*(explosions[3*j+1]-m1[i].y)
                        < (explosions[3*j+2]+0.07)*(explosions[3*j+2]+0.07)){
                         m1[i].agro = true;
+                        
+                        /*
                         if(explosiondata[j]==0){
                             InflictMajor(&m1[i].HP, &m1[i].minorHP, (time - prevtime));
                             InflictMinor(&m1[i].HP, &m1[i].minorHP, (time - prevtime)*2);
@@ -1336,6 +1373,10 @@ int main(void)
                         if(explosiondata[j] == 1){
                             InflictMinor(&m1[i].HP, &m1[i].minorHP, (time - prevtime)/2);
                         }
+                        */
+                        InflictMajor(&m1[i].HP, &m1[i].minorHP, (time - prevtime)*explosiondata[j]/30);
+                        InflictMinor(&m1[i].HP, &m1[i].minorHP, (time - prevtime)*(explosiondata[j]/10 + 0.5));
+                        
                     }
                 }
             }
@@ -1389,6 +1430,8 @@ int main(void)
         
         
         if (space == GLFW_PRESS){
+            if(time- prevspace > 1){
+            prevspace = time;
             int newexp;
             newexp = CollisionDetector(aura, auravel, auradata, UnboundIndex, unb, colnums,
                                        body[0], body[1], 2 * aurarot , bodspe * cos(bodang),  bodspe * sin(bodang));
@@ -1407,6 +1450,7 @@ int main(void)
                 explosiondata[i] = (int)colnums[i*4+3];
             }
             numexp+= newexp;
+            }
         }
         
         // Draw everything now
